@@ -1,0 +1,19 @@
+# 🇩🇪 德国 (DE) 精确分流规则
+# Surge / Shadowrocket 通用格式
+# 说明：不使用 DOMAIN-SUFFIX,de 一刀切，改为精确服务域名
+
+# --- 数字银行 ---
+DOMAIN-SUFFIX,n26.com
+DOMAIN-SUFFIX,tech26.de
+DOMAIN-SUFFIX,umber26.de
+DOMAIN-SUFFIX,n26static.com
+DOMAIN-SUFFIX,vivid.money
+DOMAIN-SUFFIX,c24.de
+
+# --- 金融 / 汇款 ---
+DOMAIN-KEYWORD,sparkasse
+DOMAIN-KEYWORD,westernunion
+DOMAIN-KEYWORD,bunq
+
+# --- 媒体 ---
+DOMAIN-KEYWORD,zdf
