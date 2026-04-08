@@ -9,13 +9,18 @@ DOMAIN-KEYWORD,bbc
 DOMAIN-SUFFIX,monzo.com
 DOMAIN-SUFFIX,monzo-alt.net
 DOMAIN-SUFFIX,monzo.me
+DOMAIN-SUFFIX,nonprod-ffs.io
+DOMAIN-SUFFIX,prod-ffs.io
 DOMAIN-SUFFIX,wise.com
+DOMAIN-SUFFIX,transferwise.com
 DOMAIN,tw-avatar.s3.eu-central-1.amazonaws.com
 DOMAIN-SUFFIX,barclays.com
 DOMAIN-SUFFIX,barclays.co.uk
+DOMAIN-SUFFIX,barclays.mobi
 DOMAIN-KEYWORD,barclays
 DOMAIN-SUFFIX,lloydsbank.com
 DOMAIN-SUFFIX,lloydsbank.co.uk
+DOMAIN-SUFFIX,lloydsbankinggroup.com
 DOMAIN-KEYWORD,lloydsbank
 DOMAIN-KEYWORD,halifax
 DOMAIN-SUFFIX,bankofscotland.co.uk
@@ -32,6 +37,7 @@ DOMAIN-SUFFIX,myguava.com
 DOMAIN-SUFFIX,guavapay.com
 DOMAIN-SUFFIX,zilch.com
 DOMAIN-SUFFIX,payzilch.com
+DOMAIN-SUFFIX,meawallet.app
 DOMAIN-SUFFIX,pillar.money
 DOMAIN-SUFFIX,hellopillar.com
 DOMAIN-SUFFIX,freetrade.io
@@ -43,6 +49,13 @@ DOMAIN-SUFFIX,loqbox.com
 DOMAIN-SUFFIX,nala.com
 DOMAIN-SUFFIX,nala-api.com
 DOMAIN-SUFFIX,lemfi.com
+DOMAIN-SUFFIX,wuzo.co.uk
+DOMAIN-SUFFIX,wuzo.com
+DOMAIN-SUFFIX,newdaycards.com
+DOMAIN-SUFFIX,ifastgb.com
+DOMAIN-SUFFIX,yonder.com
+DOMAIN-SUFFIX,sumup.com
+DOMAIN-SUFFIX,sumup.io
 
 # --- 汇款 ---
 DOMAIN-SUFFIX,paysend.com
@@ -51,9 +64,11 @@ DOMAIN-SUFFIX,worldremit.com
 DOMAIN-SUFFIX,skrill.com
 DOMAIN-SUFFIX,skrill.uk
 DOMAIN-SUFFIX,taptapsend.com
+DOMAIN-SUFFIX,profee.com
 
 # --- 信用 / 评分 ---
 DOMAIN-SUFFIX,experian.co.uk
+DOMAIN-SUFFIX,experianidentityservice.co.uk
 DOMAIN-SUFFIX,clearscore.com
 DOMAIN-SUFFIX,checkmyfile.com
 DOMAIN-SUFFIX,totallymoney.com
@@ -62,7 +77,15 @@ DOMAIN-SUFFIX,creditkarma.co.uk
 
 # --- 证券 / 投资 ---
 DOMAIN-SUFFIX,trading212.com
+DOMAIN-SUFFIX,trading212.co.uk
+DOMAIN-SUFFIX,trading212api.com
 DOMAIN-SUFFIX,kraken.com
+DOMAIN-SUFFIX,kraken.ws
+
+# --- 合规 / KYC ---
+DOMAIN-SUFFIX,onfido.com
+DOMAIN-SUFFIX,elliptic.co
+DOMAIN-SUFFIX,complyadvantage.com
 
 # --- 支付 ---
 DOMAIN-SUFFIX,stripe.com

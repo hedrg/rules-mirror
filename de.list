@@ -5,8 +5,10 @@
 # --- 数字银行 ---
 DOMAIN-SUFFIX,n26.com
 DOMAIN-SUFFIX,tech26.de
+DOMAIN-SUFFIX,number26.de
 DOMAIN-SUFFIX,umber26.de
 DOMAIN-SUFFIX,n26static.com
+DOMAIN-SUFFIX,static.n26.io
 DOMAIN-SUFFIX,vivid.money
 DOMAIN-SUFFIX,c24.de
 
@@ -14,6 +16,10 @@ DOMAIN-SUFFIX,c24.de
 DOMAIN-KEYWORD,sparkasse
 DOMAIN-KEYWORD,westernunion
 DOMAIN-KEYWORD,bunq
+DOMAIN-KEYWORD,bonify
+
+# --- 加密货币 ---
+DOMAIN-SUFFIX,okx.de
 
 # --- 媒体 ---
 DOMAIN-KEYWORD,zdf
