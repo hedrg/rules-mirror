@@ -1,5 +1,6 @@
-# 🇬🇧 UK 业务分流规则
+# 🇬🇧 UK 出口业务规则
 # Surge RULE-SET 格式，Shadowrocket 通常兼容
+# 说明：包含英国本地服务、个人指定走 UK IP 的业务域名，以及 UK 地区后缀兜底
 
 # --- 媒体 ---
 DOMAIN-KEYWORD,bbc
