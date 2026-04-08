@@ -1,5 +1,5 @@
-# 🇬🇧 英国 (UK) 精确分流规则
-# Surge / Shadowrocket 通用格式
+# 🇬🇧 UK 业务分流规则
+# Surge RULE-SET 格式，Shadowrocket 通常兼容
 
 # --- 媒体 ---
 DOMAIN-KEYWORD,bbc

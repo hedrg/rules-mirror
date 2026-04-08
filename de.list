@@ -1,6 +1,6 @@
-# 🇩🇪 德国 (DE) 精确分流规则
-# Surge / Shadowrocket 通用格式
-# 说明：不使用 DOMAIN-SUFFIX,de 一刀切，改为精确服务域名
+# 🇩🇪 DE 业务分流规则
+# Surge RULE-SET 格式，Shadowrocket 通常兼容
+# 说明：不使用 DOMAIN-SUFFIX,de 一刀切，改为精确业务域名/关键词
 
 # --- 数字银行 ---
 DOMAIN-SUFFIX,n26.com
