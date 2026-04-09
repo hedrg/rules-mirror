@@ -1,11 +1,4 @@
-# 🇬🇧 UK 出口业务规则
-# Surge RULE-SET 格式，Shadowrocket 通常兼容
-# 说明：包含英国本地服务、个人指定走 UK IP 的业务域名，以及 UK 地区后缀兜底
-
-# --- 媒体 ---
 DOMAIN-KEYWORD,bbc
-
-# --- 银行 ---
 DOMAIN-SUFFIX,monzo.com
 DOMAIN-SUFFIX,monzo-alt.net
 DOMAIN-SUFFIX,monzo.me
@@ -28,8 +21,6 @@ DOMAIN-SUFFIX,tsb.co.uk
 DOMAIN-SUFFIX,hsbc.co.uk
 DOMAIN-SUFFIX,chase.co.uk
 DOMAIN-SUFFIX,chase.uk
-
-# --- 数字银行 / Fintech ---
 DOMAIN-SUFFIX,curve.com
 DOMAIN-SUFFIX,curve.app
 DOMAIN-SUFFIX,imaginecurve.com
@@ -56,8 +47,6 @@ DOMAIN-SUFFIX,ifastgb.com
 DOMAIN-SUFFIX,yonder.com
 DOMAIN-SUFFIX,sumup.com
 DOMAIN-SUFFIX,sumup.io
-
-# --- 汇款 ---
 DOMAIN-SUFFIX,paysend.com
 DOMAIN-SUFFIX,paysend.io
 DOMAIN-SUFFIX,worldremit.com
@@ -65,8 +54,6 @@ DOMAIN-SUFFIX,skrill.com
 DOMAIN-SUFFIX,skrill.uk
 DOMAIN-SUFFIX,taptapsend.com
 DOMAIN-SUFFIX,profee.com
-
-# --- 信用 / 评分 ---
 DOMAIN-SUFFIX,experian.co.uk
 DOMAIN-SUFFIX,experianidentityservice.co.uk
 DOMAIN-SUFFIX,clearscore.com
@@ -74,31 +61,21 @@ DOMAIN-SUFFIX,checkmyfile.com
 DOMAIN-SUFFIX,totallymoney.com
 DOMAIN-SUFFIX,totallymoney.uk
 DOMAIN-SUFFIX,creditkarma.co.uk
-
-# --- 证券 / 投资 ---
 DOMAIN-SUFFIX,trading212.com
 DOMAIN-SUFFIX,trading212.co.uk
 DOMAIN-SUFFIX,trading212api.com
 DOMAIN-SUFFIX,kraken.com
 DOMAIN-SUFFIX,kraken.ws
-
-# --- 合规 / KYC ---
 DOMAIN-SUFFIX,onfido.com
 DOMAIN-SUFFIX,elliptic.co
 DOMAIN-SUFFIX,complyadvantage.com
-
-# --- 支付 ---
 DOMAIN-SUFFIX,stripe.com
 DOMAIN-SUFFIX,stripe.uk
 DOMAIN-SUFFIX,truelayer.com
 DOMAIN-SUFFIX,yapily.com
-
-# --- 通讯 / 生活 ---
 DOMAIN-SUFFIX,giffgaff.com
 DOMAIN-SUFFIX,royalmail.com
 DOMAIN-SUFFIX,topcashback.com
-
-# --- TLD 兜底 ---
 DOMAIN-SUFFIX,co.uk
 DOMAIN-SUFFIX,org.uk
 DOMAIN-SUFFIX,ac.uk

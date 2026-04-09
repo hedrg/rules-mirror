@@ -1,8 +1,3 @@
-# 🇩🇪 DE 出口业务规则
-# Surge RULE-SET 格式，Shadowrocket 通常兼容
-# 说明：包含德国本地服务、个人指定走 DE IP 的业务域名，以及德国业务精确匹配项
-
-# --- 数字银行 ---
 DOMAIN-SUFFIX,n26.com
 DOMAIN-SUFFIX,tech26.de
 DOMAIN-SUFFIX,number26.de
@@ -11,15 +6,9 @@ DOMAIN-SUFFIX,n26static.com
 DOMAIN-SUFFIX,static.n26.io
 DOMAIN-SUFFIX,vivid.money
 DOMAIN-SUFFIX,c24.de
-
-# --- 金融 / 汇款 ---
 DOMAIN-KEYWORD,sparkasse
 DOMAIN-KEYWORD,westernunion
 DOMAIN-KEYWORD,bunq
 DOMAIN-KEYWORD,bonify
-
-# --- 加密货币 ---
 DOMAIN-SUFFIX,okx.de
-
-# --- 媒体 ---
 DOMAIN-KEYWORD,zdf
