@@ -1,3 +1,5 @@
+# ========
+
 DOMAIN-SUFFIX,n26.com
 DOMAIN-SUFFIX,tech26.de
 DOMAIN-SUFFIX,number26.de
@@ -6,9 +8,18 @@ DOMAIN-SUFFIX,n26static.com
 DOMAIN-SUFFIX,static.n26.io
 DOMAIN-SUFFIX,vivid.money
 DOMAIN-SUFFIX,c24.de
+
 DOMAIN-KEYWORD,sparkasse
 DOMAIN-KEYWORD,westernunion
 DOMAIN-KEYWORD,bunq
 DOMAIN-KEYWORD,bonify
+
 DOMAIN-SUFFIX,okx.de
+
 DOMAIN-KEYWORD,zdf
+
+
+# ========
+
+
+# ========

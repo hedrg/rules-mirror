@@ -1,4 +1,7 @@
+# ========
+
 DOMAIN-KEYWORD,bbc
+
 DOMAIN-SUFFIX,monzo.com
 DOMAIN-SUFFIX,monzo-alt.net
 DOMAIN-SUFFIX,monzo.me
@@ -21,6 +24,7 @@ DOMAIN-SUFFIX,tsb.co.uk
 DOMAIN-SUFFIX,hsbc.co.uk
 DOMAIN-SUFFIX,chase.co.uk
 DOMAIN-SUFFIX,chase.uk
+
 DOMAIN-SUFFIX,curve.com
 DOMAIN-SUFFIX,curve.app
 DOMAIN-SUFFIX,imaginecurve.com
@@ -47,6 +51,7 @@ DOMAIN-SUFFIX,ifastgb.com
 DOMAIN-SUFFIX,yonder.com
 DOMAIN-SUFFIX,sumup.com
 DOMAIN-SUFFIX,sumup.io
+
 DOMAIN-SUFFIX,paysend.com
 DOMAIN-SUFFIX,paysend.io
 DOMAIN-SUFFIX,worldremit.com
@@ -54,6 +59,7 @@ DOMAIN-SUFFIX,skrill.com
 DOMAIN-SUFFIX,skrill.uk
 DOMAIN-SUFFIX,taptapsend.com
 DOMAIN-SUFFIX,profee.com
+
 DOMAIN-SUFFIX,experian.co.uk
 DOMAIN-SUFFIX,experianidentityservice.co.uk
 DOMAIN-SUFFIX,clearscore.com
@@ -61,21 +67,32 @@ DOMAIN-SUFFIX,checkmyfile.com
 DOMAIN-SUFFIX,totallymoney.com
 DOMAIN-SUFFIX,totallymoney.uk
 DOMAIN-SUFFIX,creditkarma.co.uk
+
 DOMAIN-SUFFIX,trading212.com
 DOMAIN-SUFFIX,trading212.co.uk
 DOMAIN-SUFFIX,trading212api.com
 DOMAIN-SUFFIX,kraken.com
 DOMAIN-SUFFIX,kraken.ws
+
 DOMAIN-SUFFIX,onfido.com
 DOMAIN-SUFFIX,elliptic.co
 DOMAIN-SUFFIX,complyadvantage.com
+
 DOMAIN-SUFFIX,stripe.com
 DOMAIN-SUFFIX,stripe.uk
 DOMAIN-SUFFIX,truelayer.com
 DOMAIN-SUFFIX,yapily.com
+
 DOMAIN-SUFFIX,giffgaff.com
 DOMAIN-SUFFIX,royalmail.com
 DOMAIN-SUFFIX,topcashback.com
+
+
+# ========
+
+
+# ========
+
 DOMAIN-SUFFIX,co.uk
 DOMAIN-SUFFIX,org.uk
 DOMAIN-SUFFIX,ac.uk
