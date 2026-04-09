@@ -1,0 +1,50 @@
+# 🤖 AI 服务出口规则
+# Surge RULE-SET / Clash rule-provider (behavior: classical) 通用格式
+# 说明：覆盖主流 AI 工具域名，关键词兜底；配合 AWS.sg 节点使用
+
+# --- Anthropic / Claude ---
+DOMAIN-SUFFIX,anthropic.com
+DOMAIN-SUFFIX,claude.ai
+DOMAIN-SUFFIX,claude.com
+DOMAIN-KEYWORD,anthropic
+DOMAIN-KEYWORD,claude
+
+# --- OpenAI / ChatGPT ---
+DOMAIN-SUFFIX,openai.com
+DOMAIN-SUFFIX,chatgpt.com
+DOMAIN-SUFFIX,oaiusercontent.com
+DOMAIN-SUFFIX,openaiapi.com
+DOMAIN-KEYWORD,openai
+DOMAIN-KEYWORD,chatgpt
+
+# --- Google AI / Gemini ---
+DOMAIN,generativelanguage.googleapis.com
+DOMAIN-SUFFIX,generativeai.google
+DOMAIN-SUFFIX,googleapis.com
+
+# --- GitHub Copilot ---
+DOMAIN-SUFFIX,githubcopilot.com
+DOMAIN-SUFFIX,copilot.github.com
+
+# --- Cursor ---
+DOMAIN-SUFFIX,cursor.sh
+DOMAIN-SUFFIX,cursor.com
+DOMAIN-SUFFIX,anysphere.inc
+
+# --- Perplexity ---
+DOMAIN-SUFFIX,perplexity.ai
+
+# --- Mistral ---
+DOMAIN-SUFFIX,mistral.ai
+
+# --- Cohere ---
+DOMAIN-SUFFIX,cohere.com
+DOMAIN-SUFFIX,cohere.ai
+
+# --- Hugging Face ---
+DOMAIN-SUFFIX,huggingface.co
+DOMAIN-SUFFIX,hf.co
+
+# --- 兜底关键词 ---
+DOMAIN-KEYWORD,openai
+DOMAIN-KEYWORD,copilot
