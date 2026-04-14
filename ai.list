@@ -7,6 +7,10 @@ DOMAIN-SUFFIX,claudemcpclient.com
 DOMAIN-SUFFIX,claudeusercontent.com
 DOMAIN-SUFFIX,claudeusercontent.net
 DOMAIN-SUFFIX,modelcontextprotocol.io
+DOMAIN-SUFFIX,sentry.io
+DOMAIN-SUFFIX,statsigapi.net
+DOMAIN-SUFFIX,intercom.io
+DOMAIN-SUFFIX,intercomcdn.com
 
 DOMAIN-SUFFIX,openai.com
 DOMAIN-SUFFIX,chatgpt.com
@@ -39,6 +43,7 @@ DOMAIN,cdn.usefathom.com
 DOMAIN,servd-anthropic-website.b-cdn.net
 DOMAIN,anthropic.com.cdn.cloudflare.net
 DOMAIN,anthropic.auth0.com
+DOMAIN,browser-intake-us5-datadoghq.com
 DOMAIN-SUFFIX,anthropic-cdn.com
 DOMAIN-SUFFIX,anthropic-com.ghost.io
 
@@ -50,12 +55,6 @@ DOMAIN-SUFFIX,ai.google.dev
 DOMAIN-SUFFIX,oaistatic.com
 DOMAIN-SUFFIX,openaicom.imgix.net
 DOMAIN-SUFFIX,chatgpt.livekit.cloud
-
-DOMAIN-SUFFIX,sentry.io
-DOMAIN-SUFFIX,statsigapi.net
-DOMAIN,browser-intake-us5-datadoghq.com
-DOMAIN-SUFFIX,intercom.io
-DOMAIN-SUFFIX,intercomcdn.com
 
 #
 
