@@ -37,6 +37,8 @@ DOMAIN-SUFFIX,hf.co
 
 DOMAIN,cdn.usefathom.com
 DOMAIN,servd-anthropic-website.b-cdn.net
+DOMAIN,anthropic.com.cdn.cloudflare.net
+DOMAIN,anthropic.auth0.com
 DOMAIN-SUFFIX,anthropic-cdn.com
 DOMAIN-SUFFIX,anthropic-com.ghost.io
 
@@ -49,6 +51,12 @@ DOMAIN-SUFFIX,oaistatic.com
 DOMAIN-SUFFIX,openaicom.imgix.net
 DOMAIN-SUFFIX,chatgpt.livekit.cloud
 
+DOMAIN-SUFFIX,sentry.io
+DOMAIN-SUFFIX,statsigapi.net
+DOMAIN,browser-intake-us5-datadoghq.com
+DOMAIN-SUFFIX,intercom.io
+DOMAIN-SUFFIX,intercomcdn.com
+
 #
 
 DOMAIN-KEYWORD,anthropic
@@ -56,3 +64,11 @@ DOMAIN-KEYWORD,claude
 DOMAIN-KEYWORD,openai
 DOMAIN-KEYWORD,chatgpt
 DOMAIN-KEYWORD,copilot
+DOMAIN-KEYWORD,datadog
+DOMAIN-KEYWORD,sift
+
+#
+
+IP-CIDR,160.79.104.0/21,no-resolve
+IP-CIDR6,2607:6bc0::/32,no-resolve
+IP-ASN,399358,no-resolve
