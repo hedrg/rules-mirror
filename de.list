@@ -20,3 +20,25 @@ DOMAIN-KEYWORD,westernunion
 DOMAIN-KEYWORD,bunq
 DOMAIN-KEYWORD,bonify
 DOMAIN-KEYWORD,zdf
+
+# 户外购物（商家 / 物流 / 支付）
+DOMAIN-SUFFIX,trekkinn.com
+DOMAIN-SUFFIX,tradeinn.com
+DOMAIN-SUFFIX,haglofs.com
+DOMAIN-SUFFIX,varuste.net
+DOMAIN-SUFFIX,peakstyle.de
+DOMAIN-SUFFIX,funktionelles.de
+DOMAIN-SUFFIX,intersport.de
+DOMAIN-SUFFIX,sport-schuster.de
+DOMAIN-KEYWORD,bergfreunde
+DOMAIN-KEYWORD,hardloop
+
+DOMAIN-SUFFIX,ups.com
+DOMAIN-SUFFIX,correosexpress.com
+DOMAIN-SUFFIX,mrw.es
+DOMAIN-KEYWORD,dhl
+DOMAIN-KEYWORD,dpd
+
+DOMAIN-SUFFIX,paypal.com
+DOMAIN-SUFFIX,paypalobjects.com
+DOMAIN-SUFFIX,adyen.com
