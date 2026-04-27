@@ -37,7 +37,10 @@ curl -L --fail -o geoip-cn.srs                    "$META_BASE/sing/geo/geoip/cn.
 curl -L --fail -o geoip-private.srs               "$META_BASE/sing/geo/geoip/private.srs"
 curl -L --fail -o geoip-telegram.srs              "$META_BASE/sing/geo/geoip/telegram.srs"
 
-# === C. 清理已弃用文件 ===
+# === C. Loyalsoldier 镜像 — 强力广告拦截（17 万条 EasyList+AdGuard+WSB 合并，仅 Clash 系用）===
+# 命名为 reject-loyalsoldier.txt 与 meta-rules-dat 的 category-ads-all 区分维度
+curl -L --fail -o reject-loyalsoldier.txt    "https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/reject.txt"
+
+# === D. 清理已弃用文件 ===
 # clash-china.yaml 已被 geosite-cn.mrs 替代（meta-rules-dat 同源更全）
 rm -f clash-china.yaml
-# geoip-cn.srs / geosite-cn.srs 已上面同步，不再需要旧版同步逻辑
