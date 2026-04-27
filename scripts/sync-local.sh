@@ -43,6 +43,5 @@ curl -L --fail -o geoip-telegram.srs              "$META_BASE/sing/geo/geoip/tel
 # 命名为 reject-loyalsoldier.txt 与 meta-rules-dat 的 category-ads-all 区分维度
 curl -L --fail -o reject-loyalsoldier.txt    "https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/reject.txt"
 
-# === D. 清理已弃用文件 ===
-# clash-china.yaml 已被 geosite-cn.mrs 替代（meta-rules-dat 同源更全）
-rm -f clash-china.yaml
+# === D. 清理已弃用文件（暂无）===
+# 待所有客户端配置完成 mrs 切换后，再删除 clash-china.yaml
