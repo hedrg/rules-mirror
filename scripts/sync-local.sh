@@ -20,7 +20,7 @@ curl -L --fail -o surge/surge-china.list           "$BM_BASE/Surge/China/China.l
 curl -L --fail -o surge/shadowrocket-apple.list    "$BM_BASE/Shadowrocket/Apple/Apple.list"
 curl -L --fail -o surge/shadowrocket-china.list    "$BM_BASE/Shadowrocket/China/China.list"
 curl -L --fail -o clash/apple.yaml                 "$BM_BASE/Clash/Apple/Apple.yaml"
-curl -L --fail -o clash/china.yaml                 "$BM_BASE/Clash/China/China.yaml"
+# clash/china.yaml 已废弃：被 mihomo/geosite-cn.mrs 完全替代（覆盖率 11.8 万 vs 74 行精简版）
 
 # === B. meta-rules-dat 镜像 — mihomo (mrs) + sing-box (srs) ===
 META_BASE=https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat
