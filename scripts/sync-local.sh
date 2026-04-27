@@ -1,77 +1,77 @@
 #!/usr/bin/env bash
 # rules-mirror 同步脚本
-# 双源策略：
-#   - Surge / Shadowrocket 用 blackmatrix7（.list 原生格式，meta-rules-dat 的 list 是 mihomo classical 格式不兼容）
-#   - ClashVerge / OpenClash / FIClash / sing-box 用 meta-rules-dat（dnsmasq-china-list + v2fly + EasyList + AdGuard 合并源，覆盖远超 blackmatrix7）
+# 目录布局：
+#   mihomo/   — ClashVerge / OpenClash / FIClash 用（mrs 二进制 + Loyalsoldier classical txt）
+#   singbox/  — sing-box NAS 用（srs 二进制）
+#   surge/    — Surge / Shadowrocket 用（DOMAIN-SUFFIX 原生格式）
+#                自动从 meta-rules-dat 的 mihomo classical 转换，与 mihomo/singbox 完全同源
+#   clash/    — 旧 Clash classical yaml（兼容保留，新配置已切到 mihomo/*.mrs）
+#   custom/   — 手维护规则（ai/uk/de），不在本脚本管辖范围
 
 set -euo pipefail
 
-# === A. blackmatrix7 镜像 — Surge 系专用 ===
+cd "$(dirname "$0")/.."
+
+# === A. blackmatrix7 镜像 — Surge / Shadowrocket / 旧 Clash 用 ===
 BM_BASE=https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule
 
-curl -L --fail -o surge-apple.list           "$BM_BASE/Surge/Apple/Apple.list"
-curl -L --fail -o surge-china.list           "$BM_BASE/Surge/China/China.list"
-curl -L --fail -o shadowrocket-apple.list    "$BM_BASE/Shadowrocket/Apple/Apple.list"
-curl -L --fail -o shadowrocket-china.list    "$BM_BASE/Shadowrocket/China/China.list"
-# Apple 维度的 yaml 仍由 blackmatrix7 提供（meta-rules-dat 的 apple 口径偏路由侧，与「Apple 服务直连」语义不一致）
-curl -L --fail -o clash-apple.yaml           "$BM_BASE/Clash/Apple/Apple.yaml"
-# clash-china.yaml 保留同步：现网 ClashVerge/OpenClash/FIClash 还在引用它，未升级到 geosite-cn.mrs 之前不能删
-curl -L --fail -o clash-china.yaml           "$BM_BASE/Clash/China/China.yaml"
+curl -L --fail -o surge/surge-apple.list           "$BM_BASE/Surge/Apple/Apple.list"
+curl -L --fail -o surge/surge-china.list           "$BM_BASE/Surge/China/China.list"
+curl -L --fail -o surge/shadowrocket-apple.list    "$BM_BASE/Shadowrocket/Apple/Apple.list"
+curl -L --fail -o surge/shadowrocket-china.list    "$BM_BASE/Shadowrocket/China/China.list"
+curl -L --fail -o clash/apple.yaml                 "$BM_BASE/Clash/Apple/Apple.yaml"
+curl -L --fail -o clash/china.yaml                 "$BM_BASE/Clash/China/China.yaml"
 
-# === B. meta-rules-dat 镜像 — mihomo (mrs) + sing-box (srs) 共用 ===
+# === B. meta-rules-dat 镜像 — mihomo (mrs) + sing-box (srs) ===
 META_BASE=https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat
-
-# B.1 mihomo mrs（ClashVerge / OpenClash / FIClash 用）
-curl -L --fail -o geosite-cn.mrs                  "$META_BASE/meta/geo/geosite/cn.mrs"
-curl -L --fail -o geosite-private.mrs             "$META_BASE/meta/geo/geosite/private.mrs"
-curl -L --fail -o geosite-telegram.mrs            "$META_BASE/meta/geo/geosite/telegram.mrs"
-curl -L --fail -o geosite-category-ads-all.mrs    "$META_BASE/meta/geo/geosite/category-ads-all.mrs"
-curl -L --fail -o geoip-cn.mrs                    "$META_BASE/meta/geo/geoip/cn.mrs"
-curl -L --fail -o geoip-private.mrs               "$META_BASE/meta/geo/geoip/private.mrs"
-curl -L --fail -o geoip-telegram.mrs              "$META_BASE/meta/geo/geoip/telegram.mrs"
-
-# B.2 sing-box srs（NAS sing-box 用）
-curl -L --fail -o geosite-cn.srs                  "$META_BASE/sing/geo/geosite/cn.srs"
-curl -L --fail -o geosite-private.srs             "$META_BASE/sing/geo/geosite/private.srs"
-curl -L --fail -o geosite-telegram.srs            "$META_BASE/sing/geo/geosite/telegram.srs"
-curl -L --fail -o geosite-category-ads-all.srs    "$META_BASE/sing/geo/geosite/category-ads-all.srs"
-curl -L --fail -o geoip-cn.srs                    "$META_BASE/sing/geo/geoip/cn.srs"
-curl -L --fail -o geoip-private.srs               "$META_BASE/sing/geo/geoip/private.srs"
-curl -L --fail -o geoip-telegram.srs              "$META_BASE/sing/geo/geoip/telegram.srs"
-
-# === C. Loyalsoldier 镜像 — 强力广告拦截（17 万条 EasyList+AdGuard+WSB 合并，仅 Clash 系用）===
-# 命名为 reject-loyalsoldier.txt 与 meta-rules-dat 的 category-ads-all 区分维度
-curl -L --fail -o reject-loyalsoldier.txt    "https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/reject.txt"
-
-# === D. Surge / Shadowrocket 兼容格式（自动从 meta-rules-dat 的 mihomo classical 转换）===
-# Surge 系不支持 mrs/srs，但通过 sed 转换可获得与 Clash 系同源的覆盖度（11 万条 vs blackmatrix7 74 行精简版）
-# 结果：6 端 cn 直连 / Telegram / 广告 / 私有 IP 命中域名集合完全一致 → Telegram 等服务 IP 不会跳变
 META_LIST_BASE="$META_BASE/meta/geo"
 
-# D.1 cn 直连（覆盖 17track / 海外注册中国公司域名 等 blackmatrix7 China.list 全部漏网点）
-curl -sL --fail "$META_LIST_BASE/geosite/cn.list" \
-  | sed 's|^+\.|DOMAIN-SUFFIX,|' > surge-cn.list
+# B.1 mihomo mrs
+curl -L --fail -o mihomo/geosite-cn.mrs                  "$META_BASE/meta/geo/geosite/cn.mrs"
+curl -L --fail -o mihomo/geosite-private.mrs             "$META_BASE/meta/geo/geosite/private.mrs"
+curl -L --fail -o mihomo/geosite-telegram.mrs            "$META_BASE/meta/geo/geosite/telegram.mrs"
+curl -L --fail -o mihomo/geosite-category-ads-all.mrs    "$META_BASE/meta/geo/geosite/category-ads-all.mrs"
+curl -L --fail -o mihomo/geoip-cn.mrs                    "$META_BASE/meta/geo/geoip/cn.mrs"
+curl -L --fail -o mihomo/geoip-private.mrs               "$META_BASE/meta/geo/geoip/private.mrs"
+curl -L --fail -o mihomo/geoip-telegram.mrs              "$META_BASE/meta/geo/geoip/telegram.mrs"
 
-# D.2 Telegram 域名 + IP 合并（与 Clash 系的 geosite+geoip 二维兜底等价）
+# B.2 sing-box srs
+curl -L --fail -o singbox/geosite-cn.srs                 "$META_BASE/sing/geo/geosite/cn.srs"
+curl -L --fail -o singbox/geosite-private.srs            "$META_BASE/sing/geo/geosite/private.srs"
+curl -L --fail -o singbox/geosite-telegram.srs           "$META_BASE/sing/geo/geosite/telegram.srs"
+curl -L --fail -o singbox/geosite-category-ads-all.srs   "$META_BASE/sing/geo/geosite/category-ads-all.srs"
+curl -L --fail -o singbox/geoip-cn.srs                   "$META_BASE/sing/geo/geoip/cn.srs"
+curl -L --fail -o singbox/geoip-private.srs              "$META_BASE/sing/geo/geoip/private.srs"
+curl -L --fail -o singbox/geoip-telegram.srs             "$META_BASE/sing/geo/geoip/telegram.srs"
+
+# === C. Loyalsoldier — Clash 系强力广告（17 万条 EasyList+AdGuard+WSB 合并）===
+curl -L --fail -o mihomo/reject-loyalsoldier.txt   "https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/reject.txt"
+
+# === D. Surge / Shadowrocket 兼容格式（自动从 meta-rules-dat 转换）===
+# Surge 系不支持 mrs/srs，但通过 sed 转换可获得与 mihomo/singbox 同源的覆盖度
+# → 6 端命中域名集合一致 → Telegram 等服务出口 IP 不会跳变
+
+# D.1 cn 直连（11.8 万条 dnsmasq-china-list 派生，覆盖 17track 等海外注册中国公司）
+curl -sL --fail "$META_LIST_BASE/geosite/cn.list" \
+  | sed 's|^+\.|DOMAIN-SUFFIX,|' > surge/cn.list
+
+# D.2 Telegram 域名 + IP 合并
 {
   curl -sL --fail "$META_LIST_BASE/geosite/telegram.list" | sed 's|^+\.|DOMAIN-SUFFIX,|'
   curl -sL --fail "$META_LIST_BASE/geoip/telegram.list" | awk '
     /:/ { print "IP-CIDR6," $0 ",no-resolve"; next }
     /\// { print "IP-CIDR," $0 ",no-resolve" }
   '
-} > surge-telegram.list
+} > surge/telegram.list
 
-# D.3 广告拦截（meta-rules-dat 870 条，含中俄伊本地化广告；Loyalsoldier 17 万条不接，性能优先）
+# D.3 广告拦截（meta-rules-dat 870 条；Loyalsoldier 17 万不接，性能优先）
 curl -sL --fail "$META_LIST_BASE/geosite/category-ads-all.list" | awk '
   /^\+\./ { sub(/^\+\./, ""); print "DOMAIN-SUFFIX," $0; next }
   /^[a-zA-Z0-9]/ { print "DOMAIN-SUFFIX," $0 }
-' > surge-ads.list
+' > surge/ads.list
 
-# D.4 私有 IP 兜底（替代手列 IP-CIDR）
+# D.4 私有 IP
 curl -sL --fail "$META_LIST_BASE/geoip/private.list" | awk '
   /:/ { print "IP-CIDR6," $0 ",no-resolve"; next }
   /\// { print "IP-CIDR," $0 ",no-resolve" }
-' > surge-private.list
-
-# === E. 清理已弃用文件（暂无）===
-# 待所有客户端配置完成 mrs 切换后，再删除 clash-china.yaml
+' > surge/private.list
