@@ -15,6 +15,8 @@ curl -L --fail -o shadowrocket-apple.list    "$BM_BASE/Shadowrocket/Apple/Apple.
 curl -L --fail -o shadowrocket-china.list    "$BM_BASE/Shadowrocket/China/China.list"
 # Apple 维度的 yaml 仍由 blackmatrix7 提供（meta-rules-dat 的 apple 口径偏路由侧，与「Apple 服务直连」语义不一致）
 curl -L --fail -o clash-apple.yaml           "$BM_BASE/Clash/Apple/Apple.yaml"
+# clash-china.yaml 保留同步：现网 ClashVerge/OpenClash/FIClash 还在引用它，未升级到 geosite-cn.mrs 之前不能删
+curl -L --fail -o clash-china.yaml           "$BM_BASE/Clash/China/China.yaml"
 
 # === B. meta-rules-dat 镜像 — mihomo (mrs) + sing-box (srs) 共用 ===
 META_BASE=https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat
