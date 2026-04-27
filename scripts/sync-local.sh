@@ -43,5 +43,35 @@ curl -L --fail -o geoip-telegram.srs              "$META_BASE/sing/geo/geoip/tel
 # 命名为 reject-loyalsoldier.txt 与 meta-rules-dat 的 category-ads-all 区分维度
 curl -L --fail -o reject-loyalsoldier.txt    "https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/reject.txt"
 
-# === D. 清理已弃用文件（暂无）===
+# === D. Surge / Shadowrocket 兼容格式（自动从 meta-rules-dat 的 mihomo classical 转换）===
+# Surge 系不支持 mrs/srs，但通过 sed 转换可获得与 Clash 系同源的覆盖度（11 万条 vs blackmatrix7 74 行精简版）
+# 结果：6 端 cn 直连 / Telegram / 广告 / 私有 IP 命中域名集合完全一致 → Telegram 等服务 IP 不会跳变
+META_LIST_BASE="$META_BASE/meta/geo"
+
+# D.1 cn 直连（覆盖 17track / 海外注册中国公司域名 等 blackmatrix7 China.list 全部漏网点）
+curl -sL --fail "$META_LIST_BASE/geosite/cn.list" \
+  | sed 's|^+\.|DOMAIN-SUFFIX,|' > surge-cn.list
+
+# D.2 Telegram 域名 + IP 合并（与 Clash 系的 geosite+geoip 二维兜底等价）
+{
+  curl -sL --fail "$META_LIST_BASE/geosite/telegram.list" | sed 's|^+\.|DOMAIN-SUFFIX,|'
+  curl -sL --fail "$META_LIST_BASE/geoip/telegram.list" | awk '
+    /:/ { print "IP-CIDR6," $0 ",no-resolve"; next }
+    /\// { print "IP-CIDR," $0 ",no-resolve" }
+  '
+} > surge-telegram.list
+
+# D.3 广告拦截（meta-rules-dat 870 条，含中俄伊本地化广告；Loyalsoldier 17 万条不接，性能优先）
+curl -sL --fail "$META_LIST_BASE/geosite/category-ads-all.list" | awk '
+  /^\+\./ { sub(/^\+\./, ""); print "DOMAIN-SUFFIX," $0; next }
+  /^[a-zA-Z0-9]/ { print "DOMAIN-SUFFIX," $0 }
+' > surge-ads.list
+
+# D.4 私有 IP 兜底（替代手列 IP-CIDR）
+curl -sL --fail "$META_LIST_BASE/geoip/private.list" | awk '
+  /:/ { print "IP-CIDR6," $0 ",no-resolve"; next }
+  /\// { print "IP-CIDR," $0 ",no-resolve" }
+' > surge-private.list
+
+# === E. 清理已弃用文件（暂无）===
 # 待所有客户端配置完成 mrs 切换后，再删除 clash-china.yaml
