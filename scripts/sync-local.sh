@@ -49,7 +49,7 @@ curl -L --fail -o mihomo/reject-loyalsoldier.txt   "https://raw.githubuserconten
 
 # === D. Surge / Shadowrocket 兼容格式（自动从 meta-rules-dat 转换）===
 # Surge 系不支持 mrs/srs，但通过 sed 转换可获得与 mihomo/singbox 同源的覆盖度
-# → 6 端命中域名集合一致 → Telegram 等服务出口 IP 不会跳变
+# → 6 端命中域名集合一致；出口策略由私有配置决定
 
 # D.1 cn 直连（11.8 万条 dnsmasq-china-list 派生，覆盖 17track 等海外注册中国公司）
 curl -sL --fail "$META_LIST_BASE/geosite/cn.list" \
@@ -58,6 +58,7 @@ curl -sL --fail "$META_LIST_BASE/geosite/cn.list" \
 # D.2 Telegram 域名 + IP 合并
 {
   curl -sL --fail "$META_LIST_BASE/geosite/telegram.list" | sed 's|^+\.|DOMAIN-SUFFIX,|'
+  printf '\n'
   curl -sL --fail "$META_LIST_BASE/geoip/telegram.list" | awk '
     /:/ { print "IP-CIDR6," $0 ",no-resolve"; next }
     /\// { print "IP-CIDR," $0 ",no-resolve" }
