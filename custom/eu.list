@@ -1,5 +1,8 @@
 # Other Europe -> Germany. UK/DE are handled by custom/uk.list and custom/de.list first.
 
+# Temporary precise European .com overrides
+DOMAIN-SUFFIX,courir.com
+
 # European ccTLDs
 DOMAIN-SUFFIX,eu
 DOMAIN-SUFFIX,fr
