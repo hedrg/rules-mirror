@@ -90,6 +90,7 @@ DOMAIN,tw-avatar.s3.eu-central-1.amazonaws.com
 
 #
 
+DOMAIN-SUFFIX,uk
 DOMAIN-SUFFIX,co.uk
 DOMAIN-SUFFIX,org.uk
 DOMAIN-SUFFIX,ac.uk
