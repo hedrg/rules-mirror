@@ -25,81 +25,165 @@ else
   exit 1
 fi
 
-# === A. blackmatrix7 镜像 — Surge / Shadowrocket / 旧 Clash 用 ===
-BM_BASE=https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule
-
-curl -L --fail -o surge/surge-apple.list           "$BM_BASE/Surge/Apple/Apple.list"
-curl -L --fail -o surge/surge-china.list           "$BM_BASE/Surge/China/China.list"
-curl -L --fail -o surge/shadowrocket-apple.list    "$BM_BASE/Shadowrocket/Apple/Apple.list"
-curl -L --fail -o surge/shadowrocket-china.list    "$BM_BASE/Shadowrocket/China/China.list"
-curl -L --fail -o clash/apple.yaml                 "$BM_BASE/Clash/Apple/Apple.yaml"
-# clash/china.yaml 已废弃：被 mihomo/geosite-cn.mrs 完全替代（覆盖率 11.8 万 vs 74 行精简版）
-
-# === B. meta-rules-dat 镜像 — mihomo (mrs) + sing-box (srs) ===
-META_BASE=https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat
-META_LIST_BASE="$META_BASE/meta/geo"
-
-# B.1 mihomo mrs
-curl -L --fail -o mihomo/geosite-cn.mrs                  "$META_BASE/meta/geo/geosite/cn.mrs"
-curl -L --fail -o mihomo/geosite-private.mrs             "$META_BASE/meta/geo/geosite/private.mrs"
-curl -L --fail -o mihomo/geosite-telegram.mrs            "$META_BASE/meta/geo/geosite/telegram.mrs"
-curl -L --fail -o mihomo/geosite-category-ads-all.mrs    "$META_BASE/meta/geo/geosite/category-ads-all.mrs"
-curl -L --fail -o mihomo/geoip-cn.mrs                    "$META_BASE/meta/geo/geoip/cn.mrs"
-curl -L --fail -o mihomo/geoip-private.mrs               "$META_BASE/meta/geo/geoip/private.mrs"
-curl -L --fail -o mihomo/geoip-telegram.mrs              "$META_BASE/meta/geo/geoip/telegram.mrs"
-
-# B.2 sing-box srs
-curl -L --fail -o singbox/geosite-cn.srs                 "$META_BASE/sing/geo/geosite/cn.srs"
-curl -L --fail -o singbox/geosite-private.srs            "$META_BASE/sing/geo/geosite/private.srs"
-curl -L --fail -o singbox/geosite-telegram.srs           "$META_BASE/sing/geo/geosite/telegram.srs"
-curl -L --fail -o singbox/geosite-category-ads-all.srs   "$META_BASE/sing/geo/geosite/category-ads-all.srs"
-curl -L --fail -o singbox/geoip-cn.srs                   "$META_BASE/sing/geo/geoip/cn.srs"
-curl -L --fail -o singbox/geoip-private.srs              "$META_BASE/sing/geo/geoip/private.srs"
-curl -L --fail -o singbox/geoip-telegram.srs             "$META_BASE/sing/geo/geoip/telegram.srs"
-
-# === C. Loyalsoldier — Clash 系强力广告（17 万条 EasyList+AdGuard+WSB 合并）===
-LOYAL_SOURCE_TMP="$(mktemp "${TMPDIR:-/tmp}/reject-loyalsoldier-source.XXXXXX")"
-LOYAL_MRS_TMP="$(mktemp "${TMPDIR:-/tmp}/reject-loyalsoldier-mrs.XXXXXX")"
-cleanup_loyalsoldier_tmp() {
-  rm -f "$LOYAL_SOURCE_TMP" "$LOYAL_MRS_TMP"
+# Build everything below .build/, which the repository watcher ignores. No
+# published file changes until every download, conversion, and load check passes.
+mkdir -p .build
+STAGE_DIR="$(mktemp -d .build/rules-sync.XXXXXX)"
+cleanup_stage() {
+  rm -rf "$STAGE_DIR"
 }
-trap cleanup_loyalsoldier_tmp EXIT
+trap cleanup_stage EXIT
+mkdir -p "$STAGE_DIR"/{clash,mihomo,singbox,surge,check-home}
 
-curl -L --fail -o "$LOYAL_SOURCE_TMP" "https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/reject.txt"
-"$MIHOMO_BIN" convert-ruleset domain yaml "$LOYAL_SOURCE_TMP" "$LOYAL_MRS_TMP"
-test -s "$LOYAL_MRS_TMP"
+BM_BASE="${RULES_SYNC_BM_BASE:-https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule}"
+META_BASE="${RULES_SYNC_META_BASE:-https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat}"
+META_LIST_BASE="$META_BASE/meta/geo"
+LOYAL_URL="${RULES_SYNC_LOYAL_URL:-https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/reject.txt}"
+CURL_ARGS=(-L --fail --silent --show-error --retry 2 --connect-timeout 15 --max-time 120)
 
-# 先完成下载和转换，再替换正式文件；任一步失败都保留上一版可用规则。
-mv "$LOYAL_SOURCE_TMP" mihomo/reject-loyalsoldier.txt
-mv "$LOYAL_MRS_TMP" mihomo/reject-loyalsoldier.mrs
-trap - EXIT
+fetch() {
+  local url="$1" destination="$2"
+  curl "${CURL_ARGS[@]}" -o "$destination" "$url"
+  test -s "$destination"
+}
 
-# === D. Surge / Shadowrocket 兼容格式（自动从 meta-rules-dat 转换）===
-# Surge 系不支持 mrs/srs，但通过 sed 转换可获得与 mihomo/singbox 同源的覆盖度
-# → 6 端命中域名集合一致；出口策略由私有配置决定
+# === A. blackmatrix7 mirrors and Apple domain MRS ===
+fetch "$BM_BASE/Surge/Apple/Apple.list"                 "$STAGE_DIR/surge/surge-apple.list"
+fetch "$BM_BASE/Surge/China/China.list"                 "$STAGE_DIR/surge/surge-china.list"
+fetch "$BM_BASE/Shadowrocket/Apple/Apple.list"          "$STAGE_DIR/surge/shadowrocket-apple.list"
+fetch "$BM_BASE/Shadowrocket/China/China.list"          "$STAGE_DIR/surge/shadowrocket-china.list"
+fetch "$BM_BASE/Clash/Apple/Apple.yaml"                 "$STAGE_DIR/clash/apple.yaml"
+fetch "$BM_BASE/Clash/Apple/Apple_Domain.yaml"          "$STAGE_DIR/apple-domain.yaml"
+"$MIHOMO_BIN" convert-ruleset domain yaml "$STAGE_DIR/apple-domain.yaml" "$STAGE_DIR/mihomo/apple-domain.mrs"
 
-# D.1 cn 直连（11.8 万条 dnsmasq-china-list 派生，覆盖 17track 等海外注册中国公司）
-curl -sL --fail "$META_LIST_BASE/geosite/cn.list" \
-  | sed 's|^+\.|DOMAIN-SUFFIX,|' > surge/cn.list
+# === B. meta-rules-dat mirrors — Mihomo MRS and sing-box SRS ===
+fetch "$META_BASE/meta/geo/geosite/cn.mrs"              "$STAGE_DIR/mihomo/geosite-cn.mrs"
+fetch "$META_BASE/meta/geo/geosite/private.mrs"         "$STAGE_DIR/mihomo/geosite-private.mrs"
+fetch "$META_BASE/meta/geo/geosite/telegram.mrs"        "$STAGE_DIR/mihomo/geosite-telegram.mrs"
+fetch "$META_BASE/meta/geo/geosite/category-ads-all.mrs" "$STAGE_DIR/mihomo/geosite-category-ads-all.mrs"
+fetch "$META_BASE/meta/geo/geoip/cn.mrs"                "$STAGE_DIR/mihomo/geoip-cn.mrs"
+fetch "$META_BASE/meta/geo/geoip/private.mrs"           "$STAGE_DIR/mihomo/geoip-private.mrs"
+fetch "$META_BASE/meta/geo/geoip/telegram.mrs"          "$STAGE_DIR/mihomo/geoip-telegram.mrs"
 
-# D.2 Telegram 域名 + IP 合并
+fetch "$META_BASE/sing/geo/geosite/cn.srs"              "$STAGE_DIR/singbox/geosite-cn.srs"
+fetch "$META_BASE/sing/geo/geosite/private.srs"         "$STAGE_DIR/singbox/geosite-private.srs"
+fetch "$META_BASE/sing/geo/geosite/telegram.srs"        "$STAGE_DIR/singbox/geosite-telegram.srs"
+fetch "$META_BASE/sing/geo/geosite/category-ads-all.srs" "$STAGE_DIR/singbox/geosite-category-ads-all.srs"
+fetch "$META_BASE/sing/geo/geoip/cn.srs"                "$STAGE_DIR/singbox/geoip-cn.srs"
+fetch "$META_BASE/sing/geo/geoip/private.srs"           "$STAGE_DIR/singbox/geoip-private.srs"
+fetch "$META_BASE/sing/geo/geoip/telegram.srs"          "$STAGE_DIR/singbox/geoip-telegram.srs"
+
+# === C. Loyalsoldier — preserve YAML source and publish validated MRS ===
+fetch "$LOYAL_URL" "$STAGE_DIR/mihomo/reject-loyalsoldier.txt"
+"$MIHOMO_BIN" convert-ruleset domain yaml \
+  "$STAGE_DIR/mihomo/reject-loyalsoldier.txt" \
+  "$STAGE_DIR/mihomo/reject-loyalsoldier.mrs"
+
+# === D. Surge / Shadowrocket compatible text rules ===
+fetch "$META_LIST_BASE/geosite/cn.list" "$STAGE_DIR/geosite-cn.list"
+sed 's|^+\.|DOMAIN-SUFFIX,|' "$STAGE_DIR/geosite-cn.list" > "$STAGE_DIR/surge/cn.list"
+
+fetch "$META_LIST_BASE/geosite/telegram.list" "$STAGE_DIR/geosite-telegram.list"
+fetch "$META_LIST_BASE/geoip/telegram.list" "$STAGE_DIR/geoip-telegram.list"
 {
-  curl -sL --fail "$META_LIST_BASE/geosite/telegram.list" | sed 's|^+\.|DOMAIN-SUFFIX,|'
+  sed 's|^+\.|DOMAIN-SUFFIX,|' "$STAGE_DIR/geosite-telegram.list"
   printf '\n'
-  curl -sL --fail "$META_LIST_BASE/geoip/telegram.list" | awk '
+  awk '
     /:/ { print "IP-CIDR6," $0 ",no-resolve"; next }
     /\// { print "IP-CIDR," $0 ",no-resolve" }
-  '
-} > surge/telegram.list
+  ' "$STAGE_DIR/geoip-telegram.list"
+} > "$STAGE_DIR/surge/telegram.list"
 
-# D.3 广告拦截（meta-rules-dat 870 条；Loyalsoldier 17 万不接，性能优先）
-curl -sL --fail "$META_LIST_BASE/geosite/category-ads-all.list" | awk '
+fetch "$META_LIST_BASE/geosite/category-ads-all.list" "$STAGE_DIR/geosite-ads.list"
+awk '
   /^\+\./ { sub(/^\+\./, ""); print "DOMAIN-SUFFIX," $0; next }
   /^[a-zA-Z0-9]/ { print "DOMAIN-SUFFIX," $0 }
-' > surge/ads.list
+' "$STAGE_DIR/geosite-ads.list" > "$STAGE_DIR/surge/ads.list"
 
-# D.4 私有 IP
-curl -sL --fail "$META_LIST_BASE/geoip/private.list" | awk '
+fetch "$META_LIST_BASE/geoip/private.list" "$STAGE_DIR/geoip-private.list"
+awk '
   /:/ { print "IP-CIDR6," $0 ",no-resolve"; next }
   /\// { print "IP-CIDR," $0 ",no-resolve" }
-' > surge/private.list
+' "$STAGE_DIR/geoip-private.list" > "$STAGE_DIR/surge/private.list"
+
+# === E. Validate staged artifacts before publication ===
+grep -q '^payload:' "$STAGE_DIR/clash/apple.yaml"
+grep -q '^payload:' "$STAGE_DIR/mihomo/reject-loyalsoldier.txt"
+grep -q '^DOMAIN-SUFFIX,' "$STAGE_DIR/surge/cn.list"
+grep -Eq '^(DOMAIN-SUFFIX|IP-CIDR6?),.*' "$STAGE_DIR/surge/telegram.list"
+grep -q '^DOMAIN-SUFFIX,' "$STAGE_DIR/surge/ads.list"
+grep -Eq '^IP-CIDR6?,.*' "$STAGE_DIR/surge/private.list"
+
+MRS_FILES=(
+  apple-domain.mrs
+  geosite-cn.mrs
+  geosite-private.mrs
+  geosite-telegram.mrs
+  geosite-category-ads-all.mrs
+  geoip-cn.mrs
+  geoip-private.mrs
+  geoip-telegram.mrs
+  reject-loyalsoldier.mrs
+)
+cp "${MRS_FILES[@]/#/$STAGE_DIR/mihomo/}" "$STAGE_DIR/check-home/"
+cat > "$STAGE_DIR/check-home/config.yaml" <<'YAML'
+mode: rule
+log-level: warning
+rule-providers:
+  apple-domain: {type: file, behavior: domain, format: mrs, path: ./apple-domain.mrs}
+  geosite-cn: {type: file, behavior: domain, format: mrs, path: ./geosite-cn.mrs}
+  geosite-private: {type: file, behavior: domain, format: mrs, path: ./geosite-private.mrs}
+  geosite-telegram: {type: file, behavior: domain, format: mrs, path: ./geosite-telegram.mrs}
+  geosite-category-ads-all: {type: file, behavior: domain, format: mrs, path: ./geosite-category-ads-all.mrs}
+  geoip-cn: {type: file, behavior: ipcidr, format: mrs, path: ./geoip-cn.mrs}
+  geoip-private: {type: file, behavior: ipcidr, format: mrs, path: ./geoip-private.mrs}
+  geoip-telegram: {type: file, behavior: ipcidr, format: mrs, path: ./geoip-telegram.mrs}
+  reject-loyalsoldier: {type: file, behavior: domain, format: mrs, path: ./reject-loyalsoldier.mrs}
+rules:
+  - RULE-SET,apple-domain,DIRECT
+  - RULE-SET,geosite-cn,DIRECT
+  - RULE-SET,geosite-private,DIRECT
+  - RULE-SET,geosite-telegram,DIRECT
+  - RULE-SET,geosite-category-ads-all,REJECT
+  - RULE-SET,geoip-cn,DIRECT,no-resolve
+  - RULE-SET,geoip-private,DIRECT,no-resolve
+  - RULE-SET,geoip-telegram,DIRECT,no-resolve
+  - RULE-SET,reject-loyalsoldier,REJECT
+  - MATCH,DIRECT
+YAML
+"$MIHOMO_BIN" -t -d "$STAGE_DIR/check-home" -f "$STAGE_DIR/check-home/config.yaml" >/dev/null
+
+# Publish only after the complete staged set has passed all checks.
+PUBLISH_FILES=(
+  clash/apple.yaml
+  mihomo/apple-domain.mrs
+  mihomo/geosite-cn.mrs
+  mihomo/geosite-private.mrs
+  mihomo/geosite-telegram.mrs
+  mihomo/geosite-category-ads-all.mrs
+  mihomo/geoip-cn.mrs
+  mihomo/geoip-private.mrs
+  mihomo/geoip-telegram.mrs
+  mihomo/reject-loyalsoldier.txt
+  mihomo/reject-loyalsoldier.mrs
+  singbox/geosite-cn.srs
+  singbox/geosite-private.srs
+  singbox/geosite-telegram.srs
+  singbox/geosite-category-ads-all.srs
+  singbox/geoip-cn.srs
+  singbox/geoip-private.srs
+  singbox/geoip-telegram.srs
+  surge/surge-apple.list
+  surge/surge-china.list
+  surge/shadowrocket-apple.list
+  surge/shadowrocket-china.list
+  surge/cn.list
+  surge/telegram.list
+  surge/ads.list
+  surge/private.list
+)
+for relative_path in "${PUBLISH_FILES[@]}"; do
+  mv "$STAGE_DIR/$relative_path" "$relative_path"
+done
+
+echo "rules sync complete: ${#PUBLISH_FILES[@]} validated artifacts published"
