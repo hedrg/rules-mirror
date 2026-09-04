@@ -5,30 +5,43 @@ on:
   schedule:
     - cron: '17 3 * * *'
 
+concurrency:
+  group: rules-mirror-sync
+  cancel-in-progress: false
+
 permissions:
   contents: write
 
 jobs:
   sync:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
-      - name: fetch
+
+      - name: Install pinned Mihomo converter
         run: |
-          set -e
-          curl -L --fail -o clash-apple.yaml https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Apple/Apple.yaml
-          curl -L --fail -o clash-china.yaml https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/China/China.yaml
-          curl -L --fail -o surge-apple.list https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/Apple/Apple.list
-          curl -L --fail -o surge-china.list https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/China/China.list
-          curl -L --fail -o shadowrocket-apple.list https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Shadowrocket/Apple/Apple.list
-          curl -L --fail -o shadowrocket-china.list https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Shadowrocket/China/China.list
-          curl -L --fail -o geosite-cn.srs https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/cn.srs
-          curl -L --fail -o geoip-cn.srs https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geoip/cn.srs
-      - name: commit
+          set -euo pipefail
+          curl -L --fail --silent --show-error \
+            -o "$RUNNER_TEMP/mihomo.gz" \
+            https://github.com/MetaCubeX/mihomo/releases/download/v1.19.30/mihomo-linux-amd64-v1-v1.19.30.gz
+          gzip -d "$RUNNER_TEMP/mihomo.gz"
+          chmod +x "$RUNNER_TEMP/mihomo"
+          echo "MIHOMO_BIN=$RUNNER_TEMP/mihomo" >> "$GITHUB_ENV"
+
+      - name: Build and validate all rule artifacts
+        run: ./scripts/sync-local.sh
+
+      - name: Commit one validated rule update
         run: |
+          set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add .
-          git diff --cached --quiet && exit 0
-          git commit -m "sync"
-          git push
+          git add -- clash mihomo singbox surge
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m "sync validated rule artifacts"
+          git fetch origin main
+          git rebase origin/main
+          git push origin HEAD:main
