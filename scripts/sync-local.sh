@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # rules-mirror 同步脚本
 # 目录布局：
-#   mihomo/   — ClashVerge / OpenClash / FIClash 用（mrs 二进制 + Loyalsoldier classical txt）
+#   mihomo/   — ClashVerge / ClashIOS / OpenClash / FIClash 用（mrs 二进制；保留 Loyalsoldier YAML 兼容副本）
 #   singbox/  — sing-box NAS 用（srs 二进制）
 #   surge/    — Surge / Shadowrocket 用（DOMAIN-SUFFIX 原生格式）
 #                自动从 meta-rules-dat 的 mihomo classical 转换，与 mihomo/singbox 完全同源
@@ -11,6 +11,19 @@
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
+
+# Loyalsoldier 上游的 reject.txt 实际为 YAML payload。大规则集先转换成
+# MRS，避免客户端按文本逐行校验 YAML 标记，并降低启动解析开销。
+if [[ -n "${MIHOMO_BIN:-}" && -x "$MIHOMO_BIN" ]]; then
+  :
+elif command -v mihomo >/dev/null 2>&1; then
+  MIHOMO_BIN="$(command -v mihomo)"
+elif [[ -x "/Applications/Clash Verge.app/Contents/MacOS/verge-mihomo" ]]; then
+  MIHOMO_BIN="/Applications/Clash Verge.app/Contents/MacOS/verge-mihomo"
+else
+  echo "mihomo executable not found; set MIHOMO_BIN before syncing rules" >&2
+  exit 1
+fi
 
 # === A. blackmatrix7 镜像 — Surge / Shadowrocket / 旧 Clash 用 ===
 BM_BASE=https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule
@@ -45,7 +58,21 @@ curl -L --fail -o singbox/geoip-private.srs              "$META_BASE/sing/geo/ge
 curl -L --fail -o singbox/geoip-telegram.srs             "$META_BASE/sing/geo/geoip/telegram.srs"
 
 # === C. Loyalsoldier — Clash 系强力广告（17 万条 EasyList+AdGuard+WSB 合并）===
-curl -L --fail -o mihomo/reject-loyalsoldier.txt   "https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/reject.txt"
+LOYAL_SOURCE_TMP="$(mktemp "${TMPDIR:-/tmp}/reject-loyalsoldier-source.XXXXXX")"
+LOYAL_MRS_TMP="$(mktemp "${TMPDIR:-/tmp}/reject-loyalsoldier-mrs.XXXXXX")"
+cleanup_loyalsoldier_tmp() {
+  rm -f "$LOYAL_SOURCE_TMP" "$LOYAL_MRS_TMP"
+}
+trap cleanup_loyalsoldier_tmp EXIT
+
+curl -L --fail -o "$LOYAL_SOURCE_TMP" "https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/reject.txt"
+"$MIHOMO_BIN" convert-ruleset domain yaml "$LOYAL_SOURCE_TMP" "$LOYAL_MRS_TMP"
+test -s "$LOYAL_MRS_TMP"
+
+# 先完成下载和转换，再替换正式文件；任一步失败都保留上一版可用规则。
+mv "$LOYAL_SOURCE_TMP" mihomo/reject-loyalsoldier.txt
+mv "$LOYAL_MRS_TMP" mihomo/reject-loyalsoldier.mrs
+trap - EXIT
 
 # === D. Surge / Shadowrocket 兼容格式（自动从 meta-rules-dat 转换）===
 # Surge 系不支持 mrs/srs，但通过 sed 转换可获得与 mihomo/singbox 同源的覆盖度
