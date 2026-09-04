@@ -62,6 +62,8 @@ fetch "$META_BASE/meta/geo/geosite/private.mrs"         "$STAGE_DIR/mihomo/geosi
 fetch "$META_BASE/meta/geo/geosite/telegram.mrs"        "$STAGE_DIR/mihomo/geosite-telegram.mrs"
 fetch "$META_BASE/meta/geo/geosite/category-ads-all.mrs" "$STAGE_DIR/mihomo/geosite-category-ads-all.mrs"
 fetch "$META_BASE/meta/geo/geoip/cn.mrs"                "$STAGE_DIR/mihomo/geoip-cn.mrs"
+fetch "$META_BASE/meta/geo/geoip/gb.mrs"                "$STAGE_DIR/mihomo/geoip-gb.mrs"
+fetch "$META_BASE/meta/geo/geoip/de.mrs"                "$STAGE_DIR/mihomo/geoip-de.mrs"
 fetch "$META_BASE/meta/geo/geoip/private.mrs"           "$STAGE_DIR/mihomo/geoip-private.mrs"
 fetch "$META_BASE/meta/geo/geoip/telegram.mrs"          "$STAGE_DIR/mihomo/geoip-telegram.mrs"
 
@@ -121,6 +123,8 @@ MRS_FILES=(
   geosite-telegram.mrs
   geosite-category-ads-all.mrs
   geoip-cn.mrs
+  geoip-gb.mrs
+  geoip-de.mrs
   geoip-private.mrs
   geoip-telegram.mrs
   reject-loyalsoldier.mrs
@@ -136,6 +140,8 @@ rule-providers:
   geosite-telegram: {type: file, behavior: domain, format: mrs, path: ./geosite-telegram.mrs}
   geosite-category-ads-all: {type: file, behavior: domain, format: mrs, path: ./geosite-category-ads-all.mrs}
   geoip-cn: {type: file, behavior: ipcidr, format: mrs, path: ./geoip-cn.mrs}
+  geoip-gb: {type: file, behavior: ipcidr, format: mrs, path: ./geoip-gb.mrs}
+  geoip-de: {type: file, behavior: ipcidr, format: mrs, path: ./geoip-de.mrs}
   geoip-private: {type: file, behavior: ipcidr, format: mrs, path: ./geoip-private.mrs}
   geoip-telegram: {type: file, behavior: ipcidr, format: mrs, path: ./geoip-telegram.mrs}
   reject-loyalsoldier: {type: file, behavior: domain, format: mrs, path: ./reject-loyalsoldier.mrs}
@@ -146,6 +152,8 @@ rules:
   - RULE-SET,geosite-telegram,DIRECT
   - RULE-SET,geosite-category-ads-all,REJECT
   - RULE-SET,geoip-cn,DIRECT,no-resolve
+  - RULE-SET,geoip-gb,DIRECT,no-resolve
+  - RULE-SET,geoip-de,DIRECT,no-resolve
   - RULE-SET,geoip-private,DIRECT,no-resolve
   - RULE-SET,geoip-telegram,DIRECT,no-resolve
   - RULE-SET,reject-loyalsoldier,REJECT
@@ -162,6 +170,8 @@ PUBLISH_FILES=(
   mihomo/geosite-telegram.mrs
   mihomo/geosite-category-ads-all.mrs
   mihomo/geoip-cn.mrs
+  mihomo/geoip-gb.mrs
+  mihomo/geoip-de.mrs
   mihomo/geoip-private.mrs
   mihomo/geoip-telegram.mrs
   mihomo/reject-loyalsoldier.txt
