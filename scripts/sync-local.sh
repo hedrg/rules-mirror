@@ -49,9 +49,7 @@ fetch() {
 
 # === A. blackmatrix7 mirrors and Apple domain MRS ===
 fetch "$BM_BASE/Surge/Apple/Apple.list"                 "$STAGE_DIR/surge/surge-apple.list"
-fetch "$BM_BASE/Surge/China/China.list"                 "$STAGE_DIR/surge/surge-china.list"
 fetch "$BM_BASE/Shadowrocket/Apple/Apple.list"          "$STAGE_DIR/surge/shadowrocket-apple.list"
-fetch "$BM_BASE/Shadowrocket/China/China.list"          "$STAGE_DIR/surge/shadowrocket-china.list"
 fetch "$BM_BASE/Clash/Apple/Apple.yaml"                 "$STAGE_DIR/clash/apple.yaml"
 fetch "$BM_BASE/Clash/Apple/Apple_Domain.yaml"          "$STAGE_DIR/apple-domain.yaml"
 "$MIHOMO_BIN" convert-ruleset domain yaml "$STAGE_DIR/apple-domain.yaml" "$STAGE_DIR/mihomo/apple-domain.mrs"
@@ -184,9 +182,7 @@ PUBLISH_FILES=(
   singbox/geoip-private.srs
   singbox/geoip-telegram.srs
   surge/surge-apple.list
-  surge/surge-china.list
   surge/shadowrocket-apple.list
-  surge/shadowrocket-china.list
   surge/cn.list
   surge/telegram.list
   surge/ads.list
