@@ -32,6 +32,14 @@ DOMAIN-SUFFIX,googleapis.com
 
 DOMAIN-SUFFIX,grok.com
 
+# Meta Muse / Meta AI：产品、API、下载与 Meta 账号登录
+DOMAIN-SUFFIX,muse.ai
+DOMAIN-SUFFIX,museai.com
+DOMAIN-SUFFIX,meta.ai
+DOMAIN-SUFFIX,ai.meta.com
+DOMAIN-SUFFIX,auth.meta.com
+DOMAIN,static.xx.fbcdn.net
+
 DOMAIN-SUFFIX,githubcopilot.com
 DOMAIN-SUFFIX,copilot.github.com
 
